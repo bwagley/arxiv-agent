@@ -1,13 +1,19 @@
+# A basic agents structure for retreiving relevant articles for arXiv
+# Uses a broad search through the arXiv API before scoring article relevance
+
 import arxiv
 
 client = arxiv.Client()
 
 
 #A String representing your interests for LLM processing
-research_interests = "I am intersted in large language models and LLM agents, specifically how they retrieve and process data"
+research_interests = '''
+I am intersted in large language models and LLM agents, 
+specifically how they retrieve and process data
+'''
 
 # Query for broad arxiv search
-queries = ['"LLM"']
+queries = ['"Large Language Model"', 'Agents']
 
 # How many docs to retrieve per query. 
 query_k = 10
