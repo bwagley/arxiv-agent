@@ -20,6 +20,17 @@ llama_prompt = "[INST]\n\n" + basic_prompt + "[/INST]"
 def format_prompt(prompt, abstract, interests):
     return prompt.format(abstract=abstract, interests=interests)
 
+def prompt_select(model_name):
+    match model_name:
+        case "llama":
+            return llama_prompt
+        case "mistral":
+            print("Mistral prompt not implemented, using basic prompt")
+            return basic_prompt
+        case _:
+            print("Invalid model name, please use llama or mistral")
+            exit()
+
 # Packaged text_gen_inferences client for easy calling
 class InferenceClient:
     

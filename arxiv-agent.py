@@ -4,34 +4,46 @@
 import arxiv
 import text_generation
 import re
+import json
+import sys
 
-from inference import llama_prompt
+from inference import prompt_select
 from inference import InferenceClient
 
+config_file = "config.json"
+
+if len(sys.argv) < 2:
+    print("No config specified, defaulting to config.json")
+else:
+    config_file = sys.argv[1]
+
+
+try: 
+    f = open(config_file)
+except:
+    print("Error opening config file")
+    exit()
+
+config_data = json.load(f)
+
+research_interests = config_data["research_interests"]
+queries = config_data["queries"]
+query_k = config_data["query_k"]
+categories = config_data["categories"]
+inference_url = config_data["inference_url"]
+model_type = config_data["model_type"]
+model_prompt = prompt_select(model_type)
 
 arxiv_client = arxiv.Client()
-tgi_client = InferenceClient(inference_url="http://istanbul:8080/", prompt=llama_prompt)
-
-
-#A String representing your interests for LLM processing
-research_interests = '''
-I am interested in large language models and LLM agents, 
-specifically how they retrieve and process data
-'''
-
-# Query for broad arxiv search
-queries = ['"Large Language Model"', 'Agents']
-
-# How many docs to retrieve per query. 
-query_k = 100
-
-# category to limit query to
-categories = ["cs.AI", "cs.HC", "cs.IR", "cs.LG", "cs.MA"]
+tgi_client = InferenceClient(inference_url=inference_url, prompt=model_prompt)
 
 
 # Build the arxiv query.
 query = ""
 for q in queries:
+    if ' ' in q:
+        q = '"' + q + '"'
+
     if query == "":
         query = query + "(all:" + q
     else:
@@ -45,7 +57,6 @@ for i, c in enumerate(categories):
         query = query + " OR cat:" + c
 
 query = query + ")"
-
 
 print(query)
 
@@ -65,11 +76,11 @@ for r in results:
     scored_results.append({"title": r.title, "abstract": r.summary, "url": r.entry_id, "score": score})
 
 
-scored_results = sorted(scored_results, key=lambda x: x["score"])
+scored_results = sorted(scored_results, key=lambda x: x["score"], reverse=True)
 
 for r in scored_results:
-    print("Title:", r["title"])
-    print("Abstract:", r["abstract"])
-    print("Score:", r["score"])
-    print("url:", r["url"])
+    print("#", r["title"])
+    print("## Abstract: \n", r["abstract"])
+    print("## Score: ", r["score"])
+    print("[", r["url"], "](", r["url"], ")\n\n")
 
