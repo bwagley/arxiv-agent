@@ -3,13 +3,14 @@
 
 import arxiv
 import text_generation
+import re
 
 from inference import llama_prompt
 from inference import InferenceClient
 
 
 arxiv_client = arxiv.Client()
-tgi_client = InferenceClient(prompt=llama_prompt)
+tgi_client = InferenceClient(inference_url="http://istanbul:8080/", prompt=llama_prompt)
 
 
 #A String representing your interests for LLM processing
@@ -22,7 +23,7 @@ specifically how they retrieve and process data
 queries = ['"Large Language Model"', 'Agents']
 
 # How many docs to retrieve per query. 
-query_k = 10
+query_k = 100
 
 # category to limit query to
 categories = ["cs.AI", "cs.HC", "cs.IR", "cs.LG", "cs.MA"]
@@ -55,8 +56,20 @@ search = arxiv.Search(
 
 results = arxiv_client.results(search)
 
-
+scored_results = []
+rex = re.compile('score\s*\[(.*)\]', re.IGNORECASE)
 for r in results:
-    print(r)
-    print(tgi_client.infer({"abstract": r.summary, "interests": research_interests}))
+
+    score_out = tgi_client.infer({"abstract": r.summary, "interests": research_interests})
+    score = int(rex.search(score_out.generated_text).group(1))
+    scored_results.append({"title": r.title, "abstract": r.summary, "url": r.entry_id, "score": score})
+
+
+scored_results = sorted(scored_results, key=lambda x: x["score"])
+
+for r in scored_results:
+    print("Title:", r["title"])
+    print("Abstract:", r["abstract"])
+    print("Score:", r["score"])
+    print("url:", r["url"])
 

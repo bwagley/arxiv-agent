@@ -10,6 +10,8 @@ Given the following abstract, rank the article relevance on a scale of 0 to 10
 The abstract is:
     
 {abstract}
+
+Format your response as Score[score], with no other output. 
 '''
 
 llama_prompt = "[INST]\n\n" + basic_prompt + "[/INST]"
@@ -27,8 +29,8 @@ class InferenceClient:
         self.prompt = prompt
 
     # Calls client.generate. Will add support for more arguments in future
-    def infer(self, input_dict, temperature=0):
+    def infer(self, input_dict, temperature=0.001, max_new_tokens = 20):
         formatted_prompt = format_prompt(self.prompt, **input_dict)
-        return self.client.generate(formatted_prompt, temperature=temperature)
+        return self.client.generate(formatted_prompt, temperature=temperature, max_new_tokens=max_new_tokens)
 
 

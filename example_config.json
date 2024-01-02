@@ -1,0 +1,8 @@
+{
+"research_interests": "An english sentence describing your interests",
+"queries": ["A List Of", "Topics"],
+"query_k": 100,
+"categories": ["cs.AI", "cs.LG"],
+"inference_url": "http://localhost:8080/",
+"model_type" : "llama"
+}
