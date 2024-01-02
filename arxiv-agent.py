@@ -7,13 +7,13 @@ client = arxiv.Client()
 research_interests = "I am intersted in large language models and LLM agents, specifically how they retrieve and process data"
 
 # Query for broad arxiv search
-queries = ['"Large Language Models"', 'Agents']
+queries = ['"LLM"']
 
 # How many docs to retrieve per query. 
 query_k = 10
 
-# Journal to limit query to
-journal = "CS"
+# category to limit query to
+categories = ["cs.AI", "cs.HC", "cs.IR", "cs.LG", "cs.MA"]
 
 
 # Build the arxiv query.
@@ -25,7 +25,14 @@ for q in queries:
         query = query + " OR  all:" + q
 query = query + ")"
 
-query = query + " AND jr:" + journal
+for i, c in enumerate(categories):
+    if i == 0:
+        query = query + " AND (cat:" + c
+    else:
+        query = query + " OR cat:" + c
+
+query = query + ")"
+
 
 print(query)
 
