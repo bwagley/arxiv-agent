@@ -2,13 +2,19 @@
 # Uses a broad search through the arXiv API before scoring article relevance
 
 import arxiv
+import text_generation
 
-client = arxiv.Client()
+from inference import llama_prompt
+from inference import InferenceClient
+
+
+arxiv_client = arxiv.Client()
+tgi_client = InferenceClient(prompt=llama_prompt)
 
 
 #A String representing your interests for LLM processing
 research_interests = '''
-I am intersted in large language models and LLM agents, 
+I am interested in large language models and LLM agents, 
 specifically how they retrieve and process data
 '''
 
@@ -47,9 +53,10 @@ search = arxiv.Search(
     max_results = query_k,
     sort_by = arxiv.SortCriterion.SubmittedDate)
 
-results = client.results(search)
+results = arxiv_client.results(search)
+
 
 for r in results:
-    print(r.title)
-    print(r.summary)
-    print(r.updated)
+    print(r)
+    print(tgi_client.infer({"abstract": r.summary, "interests": research_interests}))
+
