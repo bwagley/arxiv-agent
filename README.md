@@ -18,7 +18,7 @@ This JSON file must contain the following fields.
 - `research_interests`: An English language sentence describing your research interests.
 - `queries`: A list of queries for the arXiv API, such as "LLMs" or "knowledge graphs".
 - `query_k`: The number of documents to retrieve from arXiv.
-- `categories`: A list of categories to limit arXiv search to. If empty will query all of arXiv.
+- `categories`: A list of categories to limit arXiv search to. If empty will query all of arXiv. See [arxiv taxonomy](https://arxiv.org/category_taxonomy).
 - `inference_url`: The URL of your `text-generation-inference` server.
 - `model_type`: The type of model used (for prompt formatting). Current options are llama and mistral.
 
@@ -31,7 +31,7 @@ To use the arXiv agent, first customize a config as described above.  To execute
 python arxiv-agent.py your-config.json
 ```
 
-If no config is provided, it will use `config.json`, if it exists.
+If no config is provided, it will use `config.json, if it exists.
 
 ## Output
 Currently, arXiv agent outputs a markdown formatted list of the retrieved articles to `stdout`,
