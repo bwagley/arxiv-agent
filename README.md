@@ -42,6 +42,7 @@ Without file output support it is advised to save your article list using redire
 
 ## Todo
 - Add File output
+- Add basic interactive shell for exploring output. 
 - Add Truncation on output based on score
 - Add Other LLM APIs
 - Add Support for modifying research interest statement and queries based on 
